@@ -1,37 +1,74 @@
 const orderService = require("../services/order.service");
+const cartModel = require("../models/cart.model");
 
-// create order
+// create order from cart
 module.exports.CreateOrder = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { items, shippingDetails } = req.body;
+    const { shippingDetails } = req.body;
+
+    // Fetch the user's cart with populated product data
+    const cart = await cartModel.findOne({ userId }).populate("items.productId");
+
+    if (!cart || cart.items.length === 0) {
+      return res.status(400).json({ message: "Your cart is empty" });
+    }
+
+    // Build items array from cart
+    const items = cart.items.map(item => ({
+      productId: item.productId._id,
+      quantity: item.quantity
+    }));
 
     const order = await orderService.CreateOrder({ userId, items, shippingDetails });
 
-    if (!order) {
-      return res.status(404).json("Products not Found");
-    }
+    // Clear the cart after successful order
+    cart.items = [];
+    await cart.save();
 
     return res
       .status(200)
       .json({ message: "Order Created Successfully", order });
   } catch (error) {
+    console.error("CreateOrder Error:", error);
     return res.status(400).json({ message: error.message });
   }
 };
 
-// get order deatils and show order stauts
+// get order history
 module.exports.GetOrder = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const order = await orderService.GetOrder(userId);
+    const orders = await orderService.GetOrder(userId);
 
-    if (!order) return res.status(404).json({ message: "Order Not Found !!" });
+    if (!orders || orders.length === 0) {
+      return res.status(200).json({ message: "No orders found", orders: [] });
+    }
 
     return res
       .status(200)
-      .json({ message: "Order Featch Successfully", order });
+      .json({ message: "Orders fetched successfully", orders });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+// update order status (admin)
+module.exports.UpdateOrderStatus = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const { status } = req.body;
+
+    const order = await orderService.UpdateOrderStatus(orderId, status);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: `Order status updated to ${status}`, order });
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }

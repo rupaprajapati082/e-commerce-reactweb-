@@ -18,7 +18,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.set(db());
+db();
 
 // cors origin --> allow only that website that mention into origin group, ex. backend only res when localhost 3002 send reqest, other than give cors error
 // localhost 3002 --> req --> accept --> give response

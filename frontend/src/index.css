@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+body {
+  font-family: 'Outfit', sans-serif;
+}
+
 @theme {
   /* Defining the blob animation for the wash effect */
   --animate-blob: blob 7s infinite;

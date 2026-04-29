@@ -1,7 +1,6 @@
 const orderModel = require("../models/order.model");
 const productModel = require("../models/product.model");
 
-
 // create order
 module.exports.CreateOrder = async ({ userId, items, shippingDetails }) => {
   let totalAmount = 0;
@@ -43,5 +42,16 @@ module.exports.CreateOrder = async ({ userId, items, shippingDetails }) => {
 
 // get order history
 module.exports.GetOrder = async (userId) => {
-  return await orderModel.find({ userId }).sort({ createdAt: -1 });
+  return await orderModel.find({ userId })
+    .populate("items.productId")
+    .sort({ createdAt: -1 });
+};
+
+// update order status
+module.exports.UpdateOrderStatus = async (orderId, status) => {
+  return await orderModel.findByIdAndUpdate(
+    orderId,
+    { status },
+    { new: true }
+  ).populate("items.productId");
 };

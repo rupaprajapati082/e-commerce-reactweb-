@@ -6,227 +6,257 @@ import Footer from '../components/Footer';
 import './style.css';
 
 const Home = () => {
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+ const [products, setProducts] = useState([]);
+ const [filteredProducts, setFilteredProducts] = useState([]);
+ const [categories, setCategories] = useState([]);
+ const [loading, setLoading] = useState(true);
+ const [error, setError] = useState(null);
+ const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/product/all`);
-        if (response.data && response.data.products) {
-          const allProducts = response.data.products;
-          setProducts(allProducts);
-          setFilteredProducts(allProducts);
-          
-          // Dynamically extract categories from products
-          const uniqueCats = [...new Set(allProducts.map(p => p.category))];
-          const promoCats = uniqueCats.slice(0, 3).map(cat => {
-            const sampleProd = allProducts.find(p => p.category === cat);
-            return {
-              title: `Latest ${cat} Collection`,
-              desc: `Check out our newest arrivals in ${cat}.`,
-              img: sampleProd?.images[0] || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=600',
-              btn: 'Shop Now',
-              category: cat
-            };
-          });
-          setCategories(promoCats);
-        }
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError('Failed to load products. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
+ useEffect(() => {
+ const fetchProducts = async () => {
+ try {
+ setLoading(true);
+ const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/product/all`);
+ if (response.data && response.data.products) {
+ const allProducts = response.data.products;
+ setProducts(allProducts);
+ setFilteredProducts(allProducts);
+ 
+ // Dynamically extract categories from products
+ const uniqueCats = [...new Set(allProducts.map(p => p.category))];
+ const promoCats = uniqueCats.slice(0, 3).map(cat => {
+ const sampleProd = allProducts.find(p => p.category === cat);
+ return {
+ title: `Latest ${cat} Collection`,
+ desc: `Check out our newest arrivals in ${cat}.`,
+ img: sampleProd?.images[0] || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=600',
+ btn: 'Shop Now',
+ category: cat
+ };
+ });
+ setCategories(promoCats);
+ }
+ setError(null);
+ } catch (err) {
+ console.error('Error fetching products:', err);
+ setError('Failed to load products. Please try again later.');
+ } finally {
+ setLoading(false);
+ }
+ };
 
-    fetchProducts();
-  }, []);
+ fetchProducts();
+ }, []);
 
-  return (
-    <div className="min-h-screen bg-[#FDFDFD] font-sans text-slate-900">
-      <Navbar />
+ const addToCart = async (productId) => {
+ try {
+ const token = localStorage.getItem('token');
+ if (!token) return navigate('/login');
+ 
+ await axios.post(`${import.meta.env.VITE_BASE_URL}/cart/add`, 
+ { productId, quantity: 1 },
+ { headers: { Authorization: `Bearer ${token}` } }
+ );
+ alert('Added to cart!');
+ } catch (err) {
+ console.error(err);
+ alert(err.response?.data?.message || 'Failed to add to cart');
+ }
+ };
 
-      {/* Hero Section */}
-      <section className="px-6 md:px-20 py-10">
-        <div className="relative h-[60vh] md:h-[70vh] bg-[#E9F5E1] rounded-[2rem] overflow-hidden flex items-center px-8 md:px-20">
-          <div className="relative z-10 max-w-xl">
-            <span className="inline-block px-3 py-1 bg-[#FFC107] text-[#222] font-bold text-[10px] uppercase tracking-wider rounded-md mb-6">
-              Opening Sale Discount 50%
-            </span>
-            <h1 className="text-4xl md:text-6xl font-extrabold text-[#222] mb-6 leading-tight">
-              SuperMarket For <br />
-              <span className="text-[#89C74A]">Fresh Grocery</span>
-            </h1>
-            <p className="text-slate-500 text-sm md:text-lg mb-10 max-w-md leading-relaxed">
-              Introduced a new model for online grocery shopping and convenient home delivery.
-            </p>
-            <button className="px-8 py-3.5 bg-[#222] text-white font-bold uppercase text-xs tracking-widest hover:bg-[#89C74A] transition-all rounded-lg flex items-center gap-2 group">
-              Shop Now
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </button>
-          </div>
-          
-          <div className="absolute right-0 bottom-0 h-full w-full md:w-1/2 pointer-events-none hidden md:block">
-            <img 
-              src="https://freshcart.codescandy.com/assets/images/slider/slider-image-1.jpg" 
-              alt="Fresh Groceries" 
-              className="w-full h-full object-contain object-right-bottom"
-            />
-          </div>
-        </div>
-      </section>
+ return (
+ <div className="min-h-screen bg-[#FDFDFD] font-sans text-slate-900">
+ <Navbar />
 
-      {/* Featured Categories */}
-      <section className="py-20 px-6 md:px-20 bg-white">
-        <div className="flex justify-between items-end mb-12">
-          <div>
-            <h2 className="text-2xl font-bold text-[#222] mb-2">Featured Categories</h2>
-            <p className="text-sm text-slate-500 font-medium">Shop by category and find what you need quickly</p>
-          </div>
-          <div className="flex gap-2">
-            <button className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-[#89C74A] hover:text-white transition-all">←</button>
-            <button className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-[#89C74A] hover:text-white transition-all">→</button>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
-          {categories.map((cat, idx) => (
-            <div key={idx} onClick={() => navigate(`/products?category=${cat.category}`)} className="group cursor-pointer text-center">
-              <div className="bg-white border border-slate-100 rounded-2xl p-6 mb-4 hover:border-[#89C74A] hover:shadow-xl hover:shadow-[#89C74A]/10 transition-all duration-300 aspect-square flex items-center justify-center">
-                <img 
-                  src={cat.img} 
-                  alt={cat.category} 
-                  className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" 
-                />
-              </div>
-              <h3 className="font-bold text-xs text-[#222] group-hover:text-[#89C74A] transition-colors uppercase tracking-widest">{cat.category}</h3>
-            </div>
-          ))}
-          {/* Fallback if no categories yet */}
-          {categories.length === 0 && (
-            ['Dairy, Bread & Eggs', 'Snacks & Munchies', 'Fruits & Vegetables', 'Cold Drinks & Juices', 'Breakfast & Instant Food', 'Bakery & Biscuits'].map((c, i) => (
-              <div key={i} className="group cursor-pointer text-center">
-                <div className="bg-white border border-slate-100 rounded-2xl p-6 mb-4 aspect-square flex items-center justify-center">
-                  <div className="w-16 h-16 bg-slate-50 rounded-full animate-pulse"></div>
-                </div>
-                <h3 className="font-bold text-xs text-slate-400 uppercase tracking-widest">{c}</h3>
-              </div>
-            ))
-          )}
-        </div>
-      </section>
+ {/* Hero Section */}
+ <section className="relative h-[80vh] overflow-hidden group">
+ <img 
+ src="/auto_hero.png" 
+ alt="Auto Parts" 
+ className="absolute inset-0 w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-[10s]" 
+ />
+ <div className="absolute inset-0 bg-black/60"></div>
+ 
+ <div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-24">
+ <div className="animate-fadeIn space-y-4 max-w-3xl">
+ <h3 className="text-[#FF4C3B] font-bold capitalize tracking-[0.4em] text-sm md:text-base">Welcome To Tools</h3>
+ <h1 className="text-6xl md:text-9xl font-normal text-white capitalize leading-none mb-10">
+ Auto Parts
+ </h1>
+ <button 
+ onClick={() => navigate('/products')}
+ className="px-10 py-4 bg-[#FF4C3B] text-white font-bold capitalize text-[12px] hover:bg-black transition-all shadow-xl shadow-[#FF4C3B]/20"
+ >
+ Shop Now
+ </button>
+ </div>
+ </div>
+ </section>
 
-      {/* Popular Products */}
-      <section className="py-20 px-6 md:px-20 bg-white">
-        <div className="flex justify-between items-end mb-12">
-          <div>
-            <h2 className="text-2xl font-bold text-[#222] mb-2">Popular Products</h2>
-            <p className="text-sm text-slate-500 font-medium">Top selling items in our store</p>
-          </div>
-          <Link to="/products" className="text-xs font-bold uppercase tracking-widest text-[#89C74A] border-b border-[#89C74A] hover:text-[#222] hover:border-[#222] transition-all">
-            View All
-          </Link>
-        </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-          {loading ? (
-            <div className="col-span-full flex justify-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#89C74A]"></div>
-            </div>
-          ) : error ? (
-            <div className="col-span-full text-center py-20 text-red-500">{error}</div>
-          ) : filteredProducts.length === 0 ? (
-            <div className="col-span-full text-center py-20 text-slate-500">No products found.</div>
-          ) : (
-            filteredProducts.slice(0, 10).map((product) => (
-              <div key={product._id} onClick={() => navigate(`/product/${product._id}`)} className="group cursor-pointer bg-white border border-slate-100 p-4 rounded-xl hover:shadow-xl hover:border-[#89C74A]/20 transition-all duration-300">
-                <div className="relative aspect-square overflow-hidden mb-4 bg-white">
-                  <img 
-                    src={product.images && product.images[0] ? product.images[0] : 'https://via.placeholder.com/400x400?text=No+Image'} 
-                    alt={product.name} 
-                    className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-500" 
-                  />
-                  {product.discount > 0 && (
-                    <span className="absolute top-0 left-0 bg-red-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-br-lg uppercase tracking-tighter">Sale</span>
-                  )}
-                  <button className="absolute bottom-2 right-2 w-8 h-8 bg-white border border-slate-100 rounded-full flex items-center justify-center text-[#89C74A] opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all shadow-md">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                  </button>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{product.category}</p>
-                  <h3 className="font-bold text-xs text-[#222] truncate group-hover:text-[#89C74A] transition-colors">{product.name}</h3>
-                  <div className="flex items-center gap-2 pt-1">
-                    <span className="font-bold text-sm text-[#222]">
-                      ${product.discount > 0 ? (product.price - (product.price * product.discount / 100)).toFixed(2) : product.price.toFixed(2)}
-                    </span>
-                    {product.discount > 0 && (
-                      <span className="text-slate-400 line-through text-[10px]">
-                        ${product.price.toFixed(2)}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </section>
+ {/* Feature Bar */}
+ <section className="relative z-20 -mt-16 px-6 md:px-20 mb-24">
+ <div className="bg-white shadow-2xl rounded-sm py-12 px-8 grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-100 border border-slate-50">
+ {[
+ { title: 'Free Shipping', desc: 'Free Shipping World Wide', icon: '🚚', color: '#FF4C3B' },
+ { title: '24 X 7 Service', desc: 'Online Service For 24 X 7', icon: '⏰', color: '#FF4C3B' },
+ { title: 'Festival Offer', desc: 'New Online Special Festival Offer', icon: '📢', color: '#FF4C3B' },
+ { title: 'Online Payment', desc: 'Contrary To Popular Belief.', icon: '💳', color: '#FF4C3B' },
+ ].map((f, i) => (
+ <div key={i} className="flex items-center gap-6 px-8 py-6 md:py-0">
+ <span className="text-4xl" style={{ color: f.color }}>{f.icon}</span>
+ <div>
+ <h4 className="font-normal text-[13px] capitalize tracking-wider text-[#333]">{f.title}</h4>
+ <p className="text-[11px] text-slate-400 font-medium">{f.desc}</p>
+ </div>
+ </div>
+ ))}
+ </div>
+ </section>
 
-      {/* Daily Best Sells / Banners */}
-      <section className="py-10 px-6 md:px-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="relative group overflow-hidden h-[300px] rounded-3xl">
-            <img src="https://freshcart.codescandy.com/assets/images/banner/grocery-banner.png" className="w-full h-full object-cover" alt="Banner" />
-            <div className="absolute inset-0 p-10 flex flex-col justify-center">
-              <h3 className="text-2xl font-extrabold text-[#222] mb-2 leading-tight">Fruits & <br />Vegetables</h3>
-              <p className="text-slate-500 text-sm mb-6">Get Upto 30% Off</p>
-              <button className="px-6 py-2.5 bg-[#222] text-white text-[10px] font-bold uppercase tracking-widest w-fit rounded-lg hover:bg-[#89C74A] transition-all">Shop Now</button>
-            </div>
-          </div>
-          <div className="relative group overflow-hidden h-[300px] rounded-3xl">
-            <img src="https://freshcart.codescandy.com/assets/images/banner/grocery-banner-2.png" className="w-full h-full object-cover" alt="Banner" />
-            <div className="absolute inset-0 p-10 flex flex-col justify-center">
-              <h3 className="text-2xl font-extrabold text-[#222] mb-2 leading-tight">Freshly Baked <br />Buns</h3>
-              <p className="text-slate-500 text-sm mb-6">Get Upto 25% Off</p>
-              <button className="px-6 py-2.5 bg-[#222] text-white text-[10px] font-bold uppercase tracking-widest w-fit rounded-lg hover:bg-[#89C74A] transition-all">Shop Now</button>
-            </div>
-          </div>
-        </div>
-      </section>
+ {/* Welcome Section */}
+ <section className="py-24 px-6 md:px-20 text-center space-y-8 bg-[#fdfdfd]">
+ <div className="max-w-4xl mx-auto space-y-6">
+ <div className="space-y-4">
+ <h2 className="text-4xl md:text-5xl font-normal text-[#222] capitalize ">Welcome to Multikart Store</h2>
+ <div className="w-24 h-1 bg-[#FF4C3B] mx-auto relative">
+ <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-4 h-3 bg-white border-x-2 border-[#FF4C3B]"></div>
+ </div>
+ </div>
+ <p className="text-slate-500 text-sm md:text-base leading-relaxed font-medium">
+ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+ </p>
+ </div>
+ </section>
 
-      {/* Features Strip */}
-      <section className="py-20 px-6 md:px-20">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-          {[
-            { title: '10 minute delivery', desc: 'Get your order delivered to your doorstep at the earliest from FreshCart pickup stores near you.', icon: '🕒' },
-            { title: 'Best Prices & Offers', desc: 'Cheaper prices than your local supermarket, great cashback offers to top it off. Get best pricess & offers.', icon: '🏷️' },
-            { title: 'Wide Assortment', desc: 'Choose from 5000+ products across food, personal care, household, bakery, veg and fruit and other categories.', icon: '�' },
-            { title: 'Easy Returns', desc: 'Not satisfied with a product? Return it at the doorstep & get a refund within hours. No questions asked policy.', icon: '�' },
-          ].map((feature, idx) => (
-            <div key={idx} className="space-y-4">
-              <span className="text-4xl block">{feature.icon}</span>
-              <h4 className="font-bold text-lg text-[#222]">{feature.title}</h4>
-              <p className="text-xs text-slate-500 leading-relaxed">{feature.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+ {/* Featured Categories */}
+ <section className="py-24 px-6 md:px-20 bg-white">
+ <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
+ <div className="text-center md:text-left">
+ <h2 className="text-3xl font-normal text-[#222] capitalize mb-2">Featured Categories</h2>
+ <div className="w-20 h-1 bg-[#FF4C3B] mx-auto md:mx-0"></div>
+ </div>
+ <Link to="/products" className="text-[11px] font-bold capitalize text-[#FF4C3B] border-b-2 border-[#FF4C3B] hover:text-black hover:border-black transition-all">
+ View All Categories
+ </Link>
+ </div>
+ 
+ <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
+ {categories.map((cat, idx) => (
+ <div key={idx} onClick={() => navigate(`/products?category=${cat.category}`)} className="group cursor-pointer text-center">
+ <div className="bg-slate-50 rounded-full p-8 mb-6 group-hover:bg-[#FF4C3B] transition-all duration-500 aspect-square flex items-center justify-center relative overflow-hidden">
+ <img 
+ src={cat.img} 
+ alt={cat.category} 
+ className="w-full h-full object-contain group-hover:scale-110 group-hover:brightness-0 group-hover:invert transition-all duration-500 z-10" 
+ />
+ </div>
+ <h3 className="font-normal text-[12px] text-[#333] group-hover:text-[#FF4C3B] transition-colors capitalize ">{cat.category}</h3>
+ </div>
+ ))}
+ </div>
+ </section>
 
-      <Footer />
-    </div>
-  );
+ {/* Popular Products */}
+ <section className="py-24 px-6 md:px-20 bg-[#F9F9F9]">
+ <div className="text-center mb-20 space-y-4">
+ <h2 className="text-4xl font-normal text-[#222] capitalize ">Popular Products</h2>
+ <div className="w-24 h-1 bg-[#FF4C3B] mx-auto relative">
+ <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-4 h-3 bg-[#F9F9F9] border-x-2 border-[#FF4C3B]"></div>
+ </div>
+ </div>
+ 
+ <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+ {loading ? (
+ <div className="col-span-full flex justify-center py-20">
+ <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF4C3B]"></div>
+ </div>
+ ) : (
+ filteredProducts.slice(0, 10).map((product) => (
+ <div key={product._id} className="group cursor-pointer bg-white border border-slate-100 hover:border-[#FF4C3B] transition-all duration-500 relative flex flex-col h-full overflow-hidden">
+ <div onClick={() => navigate(`/product/${product._id}`)} className="relative aspect-square overflow-hidden bg-white">
+ <img 
+ src={product.images && product.images[0] ? product.images[0] : 'https://via.placeholder.com/400x400?text=No+Image'} 
+ alt={product.name} 
+ className="w-full h-full object-contain p-6 group-hover:scale-110 transition-transform duration-700" 
+ />
+ {product.discount > 0 && (
+ <span className="absolute top-4 left-4 bg-[#FF4C3B] text-white text-[10px] font-normal px-3 py-1 rounded-sm capitalize ">-{product.discount}%</span>
+ )}
+ </div>
+ <div className="p-6 space-y-3 flex-1 text-center">
+ <p className="text-[10px] text-slate-400 font-bold capitalize tracking-[0.2em]">{product.category}</p>
+ <h3 onClick={() => navigate(`/product/${product._id}`)} className="font-normal text-[13px] text-[#222] truncate hover:text-[#FF4C3B] transition-colors cursor-pointer capitalize">{product.name}</h3>
+ <div className="flex items-center justify-center gap-3 pt-2">
+ <span className="font-normal text-base text-[#FF4C3B]">
+ ${product.discount > 0 ? (product.price - (product.price * product.discount / 100)).toFixed(2) : product.price.toFixed(2)}
+ </span>
+ {product.discount > 0 && (
+ <span className="text-slate-400 line-through text-[11px] font-bold">
+ ${product.price.toFixed(2)}
+ </span>
+ )}
+ </div>
+ </div>
+ 
+ {/* Add to Cart Button */}
+ <button 
+ onClick={() => addToCart(product._id)}
+ className="w-full py-4 bg-black text-white text-[11px] font-normal capitalize tracking-[0.3em] hover:bg-[#FF4C3B] transition-all transform translate-y-full group-hover:translate-y-0 duration-500"
+ >
+ Add to Cart
+ </button>
+ </div>
+ ))
+ )}
+ </div>
+ </section>
+
+ {/* Daily Best Sells / Banners */}
+ <section className="py-10 px-6 md:px-20">
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+ <div className="relative group overflow-hidden h-[350px] bg-black">
+ <img src="https://images.unsplash.com/photo-1530124560676-5cd0065099f7?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700" alt="Heavy Duty Tools" />
+ <div className="absolute inset-0 p-12 flex flex-col justify-center">
+ <span className="text-[#FF4C3B] font-normal text-[11px] tracking-[0.3em] capitalize mb-4">Limited Edition</span>
+ <h3 className="text-4xl font-normal text-white mb-4 leading-tight capitalize ">Power Tools <br />Collection</h3>
+ <p className="text-slate-300 text-xs font-bold capitalize mb-8">Save Up To 40% On Selected Brands</p>
+ <button className="px-10 py-4 bg-white text-black text-[10px] font-normal capitalize w-fit hover:bg-[#FF4C3B] hover:text-white transition-all shadow-2xl">Shop Now</button>
+ </div>
+ </div>
+ <div className="relative group overflow-hidden h-[350px] bg-black">
+ <img src="https://images.unsplash.com/photo-1486006396193-47106858e6ec?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700" alt="Auto Accessories" />
+ <div className="absolute inset-0 p-12 flex flex-col justify-center">
+ <span className="text-[#FF4C3B] font-normal text-[11px] tracking-[0.3em] capitalize mb-4">Pro Accessories</span>
+ <h3 className="text-4xl font-normal text-white mb-4 leading-tight capitalize ">Automotive <br />Essentials</h3>
+ <p className="text-slate-300 text-xs font-bold capitalize mb-8">Premium Parts For Every Model</p>
+ <button className="px-10 py-4 bg-white text-black text-[10px] font-normal capitalize w-fit hover:bg-[#FF4C3B] hover:text-white transition-all shadow-2xl">Browse Parts</button>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ {/* Features Strip */}
+ <section className="py-24 px-6 md:px-20 bg-white border-t border-slate-100">
+ <div className="grid grid-cols-1 md:grid-cols-4 gap-16">
+ {[
+ { title: 'Global Logistics', desc: 'Fast and secure shipping for all industrial equipment worldwide.', icon: '📦' },
+ { title: 'Technical Support', desc: 'Expert assistance available 24/7 for all your tool-related queries.', icon: '🛠️' },
+ { title: 'Premium Quality', desc: 'Every product is certified to meet international industrial standards.', icon: '🏆' },
+ { title: 'Secure Payment', desc: 'Multi-layer encrypted payment processing for your business security.', icon: '🛡️' },
+ ].map((feature, idx) => (
+ <div key={idx} className="space-y-6 group">
+ <span className="text-5xl block group-hover:scale-110 transition-transform">{feature.icon}</span>
+ <h4 className="font-normal text-[13px] text-[#222] capitalize group-hover:text-[#FF4C3B] transition-colors">{feature.title}</h4>
+ <p className="text-[12px] text-slate-400 leading-relaxed font-medium">{feature.desc}</p>
+ </div>
+ ))}
+ </div>
+ </section>
+
+ <Footer />
+ </div>
+ );
 };
 
 export default Home;

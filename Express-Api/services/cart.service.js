@@ -1,18 +1,33 @@
 const cartModel = require("../models/cart.model");
 
 // add item to cart
-module.exports.addToCart = async ({ userId, item }) => {
+module.exports.addToCart = async ({ userId, item, overwrite }) => {
   let cart = await cartModel.findOne({ userId });
 
-  if (!cart) cart = new cartModel({ userId, items: [] });
+  if (!cart) {
+    cart = new cartModel({ userId, items: [item] });
+  } else {
+    const existingItemIndex = cart.items.findIndex(
+      (i) => i.productId.toString() === item.productId.toString()
+    );
 
-  cart.items.push(item);
+    if (existingItemIndex >= 0) {
+      if (overwrite) {
+        cart.items[existingItemIndex].quantity = item.quantity;
+      } else {
+        cart.items[existingItemIndex].quantity += item.quantity;
+      }
+    } else {
+      cart.items.push(item);
+    }
+  }
+
   return await cart.save();
 };
 
 // get Cart
 module.exports.GetCart = async (userId) => {
-  return await cartModel.findOne({ userId });
+  return await cartModel.findOne({ userId }).populate("items.productId");
 };
 
 // delete single product from cart

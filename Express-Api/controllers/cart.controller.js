@@ -5,26 +5,33 @@ const cartService = require("../services/cart.service");
 module.exports.AddToCart = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { item } = req.body;
+    const { productId, quantity, overwrite } = req.body;
 
-    const Exist = await cartModel.findOne({ userId });
-    const existProduct = Exist.items.map((val) => {
-      const ids = val.productId;
-      return ids;
-    });
-   
-    existProduct.forEach((e) => {
-      if(e.equals(item.productId)){
-        return res.status(400).json({message: "Product Already Is Add Into Cart"})
+    if (!productId) {
+      return res.status(400).json({ message: "ProductId is required" });
+    }
+
+    const cart = await cartModel.findOne({ userId });
+    
+    if (cart && !overwrite) {
+      const isProductExist = cart.items.find(item => item.productId.toString() === productId);
+      if (isProductExist) {
+        return res.status(400).json({ message: "Product is already in your cart" });
       }
+    }
+
+    const updatedCart = await cartService.addToCart({ 
+      userId, 
+      item: { productId, quantity: quantity || 1 },
+      overwrite
     });
 
-    const cart = await cartService.addToCart({ userId, item });
-
-    return res
-      .status(200)
-      .json({ message: "add item to cart successfully", cart });
+    return res.status(200).json({ 
+      message: overwrite ? "Cart updated successfully" : "Item added to cart successfully", 
+      cart: updatedCart 
+    });
   } catch (error) {
+    console.error("AddToCart Error:", error);
     return res.status(400).json({ message: error.message });
   }
 };

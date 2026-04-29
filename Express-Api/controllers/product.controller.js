@@ -2,7 +2,7 @@ const productService = require("../services/product.service");
 const productModel = require("../models/product.model");
 
 // add new products
-module.exports.createProduct = async (req, res) => {
+module.exports.CreateProduct = async (req, res) => {
   try {
     const {
       name,
@@ -12,15 +12,26 @@ module.exports.createProduct = async (req, res) => {
       discount,
       isNewProduct,
       sku,
-      images,
       brand,
       category,
     } = req.body;
 
+    // Handle uploaded images
+    let images = [];
+    if (req.files && req.files.length > 0) {
+      images = req.files.map(file => {
+        const base64Image = file.buffer.toString('base64');
+        return `data:${file.mimetype};base64,${base64Image}`;
+      });
+    } else if (req.body.images) {
+      // Fallback to images from body if no files uploaded (e.g. if sending URLs)
+      images = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
+    }
+
     const isExist = await productModel.findOne({ sku: sku });
 
     if (isExist) {
-      return res.status(400).json({ message: "Product Already Registerd" });
+      return res.status(400).json({ message: "Product Already Registered" });
     }
 
     const product = await productService.createProduct({
@@ -29,22 +40,22 @@ module.exports.createProduct = async (req, res) => {
       stock,
       price,
       discount,
-      isNewProduct,
+      isNewProduct: isNewProduct === 'true' || isNewProduct === true, // handle string from form-data
       sku,
       images,
       brand,
       category,
     });
 
-    return res.status(200).json({ msg: "Product Added Sucessfully", product });
+    return res.status(200).json({ msg: "Product Added Successfully", product });
   } catch (error) {
-    console.error("Error in createProduct:", error);
+    console.error("Error in CreateProduct:", error);
     return res.status(500).json({ message: error.message || "Internal Server Error" });
   }
 };
 
 // all products
-module.exports.allProduct = async (req, res) => {
+module.exports.GetAllProducts = async (req, res) => {
   try {
     const products = await productService.AllProduct();
 
@@ -59,7 +70,7 @@ module.exports.allProduct = async (req, res) => {
 };
 
 // single product
-module.exports.singleProduct = async (req, res) => {
+module.exports.GetSingleProduct = async (req, res) => {
   try {
     const product = await productService.singleProduct(req.params.id);
 
@@ -74,43 +85,58 @@ module.exports.singleProduct = async (req, res) => {
 };
 
 // update product
-module.exports.updateProduct = async (req, res) => {
-  const productId = req.params.id;
+module.exports.UpdateProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
 
-  const {
-    name,
-    description,
-    stock,
-    price,
-    discount,
-    isNewProduct,
-    sku,
-    images,
-    brand,
-    category,
-  } = req.body;
+    const {
+      name,
+      description,
+      stock,
+      price,
+      discount,
+      isNewProduct,
+      sku,
+      brand,
+      category,
+    } = req.body;
 
-  const updatedProduct = await productService.updateProduct({
-    productId,
-    name,
-    description,
-    stock,
-    price,
-    discount,
-    isNewProduct,
-    sku,
-    images,
-    brand,
-    category,
-  });
+    // Handle uploaded images if any
+    let images;
+    if (req.files && req.files.length > 0) {
+      images = req.files.map(file => {
+        const base64Image = file.buffer.toString('base64');
+        return `data:${file.mimetype};base64,${base64Image}`;
+      });
+    } else if (req.body.images) {
+      images = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
+    }
 
-  return res
-    .status(200)
-    .json({ message: "User Update Sucessfully", updatedProduct });     
+    const updatedProduct = await productService.updateProduct({
+      productId,
+      name,
+      description,
+      stock,
+      price,
+      discount,
+      isNewProduct: isNewProduct !== undefined ? (isNewProduct === 'true' || isNewProduct === true) : undefined,
+      sku,
+      images,
+      brand,
+      category,
+    });
+
+    return res
+      .status(200)
+      .json({ message: "Product Updated Successfully", updatedProduct });
+  } catch (error) {
+    console.error("Error in UpdateProduct:", error);
+    return res.status(500).json({ message: error.message || "Internal Server Error" });
+  }
 };
 
 // delete product
-module.exports.deleteProduct = async (req, res) => {
+module.exports.DeleteProduct = async (req, res) => {
   try {
     const productId = req.params.id;
 

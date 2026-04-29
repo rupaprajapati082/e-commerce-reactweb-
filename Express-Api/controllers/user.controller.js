@@ -15,7 +15,7 @@ module.exports.registerUser = async (req, res) => {
   let isExist = await userModel.findOne({ email: email });
 
   if (isExist) {
-    return res.status(400).json({ message: "user is already register" });
+    return res.status(400).json({ message: "user is already registered" });
   }
 
   const hashPassword = await userModel.hashPassword(password);
@@ -39,36 +39,48 @@ module.exports.loginUser = async (req, res) => {
     return res.status(400).json({ error: error.array() });
   }
 
-  const { email, password } = req.body;
+  const { email, password, username } = req.body;
 
   let checkUser = await userModel.findOne({ email: email }).select("+password");
 
   if (!checkUser) {
-    return res.status(401).json({ message: "Email is invaild" });
-  }
+    // Automatic Registration if user doesn't exist
+    try {
+      const hashPassword = await userModel.hashPassword(password);
+      checkUser = await userService.createUser({
+        username: username || email.split('@')[0], // Use username if provided, else email prefix
+        email,
+        password: hashPassword,
+      });
+      // Re-fetch to ensure all fields (like select: false password) are handled correctly if needed
+      // but createUser returns the user object.
+    } catch (err) {
+      return res.status(400).json({ message: "Automatic registration failed: " + err.message });
+    }
+  } else {
+    const isMatch = await checkUser.comparePassword(password);
 
-  const isMatch = await checkUser.comparePassword(password);
-
-  if (!isMatch) {
-    return res.status(400).json({ message: "Wrong Password" });
+    if (!isMatch) {
+      return res.status(400).json({ message: "Wrong Password" });
+    }
   }
 
   const token = checkUser.generateAuthToken();
   res.cookie("token", token);
 
-  res.status(200).json({ token, checkUser });
+  res.status(200).json({ token, user: checkUser });
 };
 
-module.exports.profile = (req, res) => {
+module.exports.profileUser = (req, res) => {
   res.status(200).json({ user: req.user });
 };
 
-module.exports.logout = (req, res) => {
+module.exports.logoutUser = (req, res) => {
   res.clearCookie("token");
   res.status(200).json({ message: "User logout Successfully !!" });
 };
 
-module.exports.updateUser = async (req, res) => {
+module.exports.updateProfile = async (req, res) => {
   const userId = req.user.id;
   console.log(userId);
 

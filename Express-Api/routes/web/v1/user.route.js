@@ -34,13 +34,13 @@ router.post(
 );
 
 // show profile
-router.get("/profile", middleware.authUser, userController.profile);
+router.get("/profile", middleware.authUser, userController.profileUser);
 
 // logout profile
-router.get("/logout", middleware.authUser, userController.logout)
+router.get("/logout", middleware.authUser, userController.logoutUser)
 
 // update profile
-router.put("/update", middleware.authUser, userController.updateUser)
+router.put("/update", middleware.authUser, userController.updateProfile)
 
 // forget password
 router.post("/forget-password", userController.forgetPassword)

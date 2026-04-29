@@ -4,136 +4,137 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const Support = () => {
-  return (
-    <div className="min-h-screen bg-[#FDFDFD]">
-      <Navbar />
-      
-      {/* Breadcrumbs */}
-      <div className="bg-[#f9f9f9] py-10 px-6 md:px-20 border-b border-slate-100">
-        <h1 className="text-3xl font-bold text-[#222]">Support & Info</h1>
-        <div className="flex items-center gap-2 mt-2 text-xs text-slate-400 uppercase font-bold tracking-widest">
-          <Link to="/" className="hover:text-[#89C74A]">Home</Link>
-          <span>/</span>
-          <span className="text-slate-600">Support</span>
-        </div>
-      </div>
+ return (
+ <div className="min-h-screen bg-[#FDFDFD]">
+ <Navbar />
+ 
+ {/* Breadcrumbs */}
+ <div className="bg-[#222] py-16 px-6 md:px-20 border-b border-white/5">
+ <h1 className="text-4xl md:text-5xl font-normal text-white capitalize mb-4">Support & Info</h1>
+ <div className="flex items-center gap-2 text-[10px] text-slate-500 capitalize font-normal tracking-[0.2em]">
+ <Link to="/" className="hover:text-[#FF4C3B] transition-colors">Home</Link>
+ <span className="text-slate-700">/</span>
+ <span className="text-white">Support</span>
+ </div>
+ </div>
 
-      <div className="px-6 md:px-20 py-16">
-        <div className="max-w-4xl mx-auto space-y-24">
-          {/* About Section */}
-          <section>
-            <div className="flex flex-col md:flex-row gap-12 items-center">
-              <div className="w-full md:w-1/2">
-                <span className="text-[#89C74A] font-bold text-[10px] tracking-widest uppercase mb-2 block">Our Story</span>
-                <h2 className="text-3xl font-bold text-[#222] mb-6 uppercase tracking-tight">Pure, Organic, <br />Natural Beauty</h2>
-                <div className="space-y-4 text-slate-500 text-sm leading-relaxed">
-                  <p>
-                    Welcome to Ecolife, your premier destination for high-quality organic fashion and skincare. Founded in 2026, we strive to bring you the best look anytime, anywhere, while respecting our planet.
-                  </p>
-                  <p>
-                    Our mission is to provide stylish, comfortable, and affordable products for everyone. We believe that beauty should be accessible without compromising on quality or environmental ethics.
-                  </p>
-                </div>
-              </div>
-              <div className="w-full md:w-1/2">
-                <img 
-                  src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=800" 
-                  alt="About Ecolife" 
-                  className="w-full rounded-sm shadow-xl"
-                />
-              </div>
-            </div>
-          </section>
+ <div className="px-6 md:px-20 py-20">
+ <div className="max-w-4xl mx-auto space-y-32">
+ {/* About Section */}
+ <section>
+ <div className="flex flex-col md:flex-row gap-16 items-center">
+ <div className="w-full md:w-1/2">
+ <span className="text-[#FF4C3B] font-normal text-[11px] tracking-[0.3em] capitalize mb-4 block">Our Legacy</span>
+ <h2 className="text-5xl font-normal text-[#222] mb-8 capitalize leading-none">Professional <br />Grade Equipment</h2>
+ <div className="space-y-6 text-slate-500 text-[13px] leading-relaxed font-medium">
+ <p>
+ Welcome to Multikart Tool Store, your ultimate destination for high-performance industrial equipment and professional tools. Established in 2026, we've committed ourselves to delivering precision and power to experts across the globe.
+ </p>
+ <p>
+ Our mission is to empower professionals and enthusiasts with tools that never fail. We believe in quality that lasts a lifetime, backed by engineering excellence and a passion for craftsmanship.
+ </p>
+ </div>
+ </div>
+ <div className="w-full md:w-1/2">
+ <img 
+ src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800" 
+ alt="Professional Tools" 
+ className="w-full rounded-sm shadow-2xl grayscale hover:grayscale-0 transition-all duration-700"
+ />
+ </div>
+ </div>
+ </section>
 
-          {/* Contact Section */}
-          <section className="bg-[#f9f9f9] p-12 rounded-sm border border-slate-100">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-              <div className="space-y-8">
-                <div>
-                  <span className="text-[#89C74A] font-bold text-[10px] tracking-widest uppercase mb-2 block">Contact Us</span>
-                  <h2 className="text-3xl font-bold text-[#222] uppercase tracking-tight">Get In Touch</h2>
-                </div>
-                
-                <div className="space-y-6">
-                  <div className="flex gap-4">
-                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-[#89C74A]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-[#222]">Our Store</h4>
-                      <p className="text-xs text-slate-500 mt-1">123 Ecolife Ave, New York, NY 10001</p>
-                    </div>
-                  </div>
+ {/* Contact Section */}
+ <section className="bg-black p-16 rounded-sm border border-white/5 relative overflow-hidden">
+ <div className="absolute top-0 right-0 w-64 h-64 bg-[#FF4C3B]/10 blur-[100px] rounded-full"></div>
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-20 relative z-10">
+ <div className="space-y-12">
+ <div>
+ <span className="text-[#FF4C3B] font-normal text-[11px] tracking-[0.3em] capitalize mb-4 block">Contact Center</span>
+ <h2 className="text-4xl font-normal text-white capitalize ">Get In Touch</h2>
+ </div>
+ 
+ <div className="space-y-10">
+ <div className="flex gap-6">
+ <div className="w-12 h-12 bg-white/5 rounded-sm flex items-center justify-center text-[#FF4C3B] shrink-0 border border-white/10">
+ <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+ <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+ <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+ </svg>
+ </div>
+ <div>
+ <h4 className="text-[11px] font-normal capitalize text-white mb-2">Headquarters</h4>
+ <p className="text-[11px] text-slate-400 font-bold capitalize leading-loose">123 Industrial Way, Sector 7<br />New York, NY 10001</p>
+ </div>
+ </div>
 
-                  <div className="flex gap-4">
-                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-[#89C74A]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-[#222]">Phone Number</h4>
-                      <p className="text-xs text-slate-500 mt-1">+1 (555) 123-4567</p>
-                    </div>
-                  </div>
+ <div className="flex gap-6">
+ <div className="w-12 h-12 bg-white/5 rounded-sm flex items-center justify-center text-[#FF4C3B] shrink-0 border border-white/10">
+ <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+ <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+ </svg>
+ </div>
+ <div>
+ <h4 className="text-[11px] font-normal capitalize text-white mb-2">Service Hotline</h4>
+ <p className="text-[11px] text-slate-400 font-bold capitalize leading-loose">+1 (555) TOOL-HELP</p>
+ </div>
+ </div>
 
-                  <div className="flex gap-4">
-                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-[#89C74A]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-[#222]">Email Address</h4>
-                      <p className="text-xs text-slate-500 mt-1">support@ecolife.com</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <form className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <input type="text" placeholder="First Name" className="w-full px-6 py-4 border border-slate-200 rounded-sm text-sm focus:outline-none focus:border-[#89C74A] bg-white transition-all" />
-                  <input type="text" placeholder="Last Name" className="w-full px-6 py-4 border border-slate-200 rounded-sm text-sm focus:outline-none focus:border-[#89C74A] bg-white transition-all" />
-                </div>
-                <input type="email" placeholder="Email Address" className="w-full px-6 py-4 border border-slate-200 rounded-sm text-sm focus:outline-none focus:border-[#89C74A] bg-white transition-all" />
-                <textarea placeholder="Your Message" rows="5" className="w-full px-6 py-4 border border-slate-200 rounded-sm text-sm focus:outline-none focus:border-[#89C74A] bg-white transition-all"></textarea>
-                <button className="w-full bg-[#222] text-white font-bold uppercase text-[11px] tracking-widest py-4 rounded-full hover:bg-[#89C74A] transition-all shadow-lg shadow-black/10">
-                  Send Message
-                </button>
-              </form>
-            </div>
-          </section>
+ <div className="flex gap-6">
+ <div className="w-12 h-12 bg-white/5 rounded-sm flex items-center justify-center text-[#FF4C3B] shrink-0 border border-white/10">
+ <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+ <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+ </svg>
+ </div>
+ <div>
+ <h4 className="text-[11px] font-normal capitalize text-white mb-2">Support Email</h4>
+ <p className="text-[11px] text-slate-400 font-bold capitalize leading-loose">pro-support@multikart.com</p>
+ </div>
+ </div>
+ </div>
+ </div>
+ 
+ <form className="space-y-6">
+ <div className="grid grid-cols-2 gap-6">
+ <input type="text" placeholder="FIRST NAME" className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-sm text-xs font-bold text-white focus:outline-none focus:border-[#FF4C3B] transition-all" />
+ <input type="text" placeholder="LAST NAME" className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-sm text-xs font-bold text-white focus:outline-none focus:border-[#FF4C3B] transition-all" />
+ </div>
+ <input type="email" placeholder="EMAIL ADDRESS" className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-sm text-xs font-bold text-white focus:outline-none focus:border-[#FF4C3B] transition-all" />
+ <textarea placeholder="DESCRIBE YOUR REQUEST" rows="6" className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-sm text-xs font-bold text-white focus:outline-none focus:border-[#FF4C3B] transition-all"></textarea>
+ <button className="w-full bg-[#FF4C3B] text-white font-normal capitalize text-[10px] tracking-[0.3em] py-5 rounded-sm hover:bg-white hover:text-black transition-all shadow-2xl shadow-[#FF4C3B]/20">
+ Submit Inquiry
+ </button>
+ </form>
+ </div>
+ </section>
 
-          {/* FAQ Section */}
-          <section className="py-10">
-            <div className="text-center mb-16">
-              <span className="text-[#89C74A] font-bold text-[10px] tracking-widest uppercase mb-2 block">Help Center</span>
-              <h2 className="text-3xl font-bold text-[#222] uppercase tracking-tight">Frequently Asked Questions</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[
-                { q: 'How do I track my order?', a: 'Once your order is shipped, you will receive an email with a tracking number and a link to track your package.' },
-                { q: 'What is your return policy?', a: 'We offer a 30-day return policy for all unused and unopened items in their original packaging.' },
-                { q: 'Do you ship internationally?', a: 'Yes, we ship to most countries worldwide. Shipping costs and delivery times vary by location.' },
-                { q: 'Are your products organic?', a: 'All our products are made with 100% natural and organic ingredients, ethically sourced and cruelty-free.' },
-              ].map((faq, idx) => (
-                <div key={idx} className="p-8 border border-slate-100 bg-white hover:shadow-lg transition-all">
-                  <h4 className="font-bold text-[#222] mb-3">{faq.q}</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">{faq.a}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        </div>
-      </div>
+ {/* FAQ Section */}
+ <section className="py-10">
+ <div className="text-center mb-24">
+ <span className="text-[#FF4C3B] font-normal text-[11px] tracking-[0.3em] capitalize mb-4 block">Knowledge Base</span>
+ <h2 className="text-4xl font-normal text-[#222] capitalize ">Professional FAQs</h2>
+ </div>
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+ {[
+ { q: 'How do I track my industrial shipment?', a: 'High-value tool orders are shipped via secure logistics. You will receive a real-time tracking dashboard link via email once dispatched.' },
+ { q: 'What is the warranty on power tools?', a: 'We offer a standard 3-year professional warranty on all motor-driven equipment and a lifetime replacement guarantee on hand tools.' },
+ { q: 'Do you offer bulk enterprise pricing?', a: 'Yes, we provide tiered pricing for construction firms and automotive workshops. Contact our sales team for a custom quote.' },
+ { q: 'Are your tools certified for industrial use?', a: 'Every tool in our catalog meets or exceeds ANSI and ISO industrial standards for safety and performance.' },
+ ].map((faq, idx) => (
+ <div key={idx} className="p-10 border border-slate-100 bg-white hover:shadow-2xl transition-all group">
+ <h4 className="font-normal text-[13px] capitalize tracking-tight text-[#222] mb-5 group-hover:text-[#FF4C3B] transition-colors">{faq.q}</h4>
+ <p className="text-[12px] text-slate-500 leading-relaxed font-medium">{faq.a}</p>
+ </div>
+ ))}
+ </div>
+ </section>
+ </div>
+ </div>
 
-      <Footer />
-    </div>
-  );
+ <Footer />
+ </div>
+ );
 };
 
 export default Support;
