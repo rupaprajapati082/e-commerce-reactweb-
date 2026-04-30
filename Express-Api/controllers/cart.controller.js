@@ -4,7 +4,7 @@ const cartService = require("../services/cart.service");
 // Add To Cart
 module.exports.AddToCart = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
     const { productId, quantity, overwrite } = req.body;
 
     if (!productId) {
@@ -13,12 +13,7 @@ module.exports.AddToCart = async (req, res) => {
 
     const cart = await cartModel.findOne({ userId });
     
-    if (cart && !overwrite) {
-      const isProductExist = cart.items.find(item => item.productId.toString() === productId);
-      if (isProductExist) {
-        return res.status(400).json({ message: "Product is already in your cart" });
-      }
-    }
+    // Let the service handle existing products (it increments the quantity)
 
     const updatedCart = await cartService.addToCart({ 
       userId, 
@@ -39,12 +34,12 @@ module.exports.AddToCart = async (req, res) => {
 // Get Cart
 module.exports.GetCart = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     let cart = await cartService.GetCart(userId);
 
     if (!cart) {
-      return res.status(404).json("Cart Not Found !!");
+      return res.status(200).json({ message: "Cart is empty", cart: { items: [] } });
     }
 
     return res
@@ -58,7 +53,7 @@ module.exports.GetCart = async (req, res) => {
 // remove single item from cart
 module.exports.RemoveItem = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
     const productId = req.params.id;
 
     await cartService.RemoveSingleProduct({ userId, productId });
@@ -69,6 +64,20 @@ module.exports.RemoveItem = async (req, res) => {
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
+};// remove single item from cart (by body - used by frontend)
+module.exports.RemoveItemByBody = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { productId } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({ message: "productId is required" });
+    }
+
+    await cartService.RemoveSingleProduct({ userId, productId });
+
+    return res.status(200).json({ message: "Item removed from cart successfully" });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
 };
-
-

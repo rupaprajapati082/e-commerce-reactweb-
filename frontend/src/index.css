@@ -1,11 +1,6 @@
 @import "tailwindcss";
 
-body {
-  font-family: 'Outfit', sans-serif;
-}
-
 @theme {
-  /* Defining the blob animation for the wash effect */
   --animate-blob: blob 7s infinite;
 
   @keyframes blob {
@@ -16,6 +11,46 @@ body {
   }
 }
 
-/* Custom utility for delays (Tailwind 4 handles most, but this is cleaner) */
+body {
+  font-family: 'Outfit', sans-serif;
+  @apply bg-white text-slate-900 transition-colors duration-300;
+}
+
+.dark body {
+  @apply bg-[#0A0A0A] text-slate-100;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 rounded-full transition-colors;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-white/10;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-[#FF4C3B];
+}
+
+/* Custom utility for delays */
 .delay-2000 { animation-delay: 2s; }
 .delay-4000 { animation-delay: 4s; }
+
+/* Smooth animations */
+.animate-in {
+  animation: animate-in 0.5s ease-out;
+}
+
+@keyframes animate-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

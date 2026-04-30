@@ -33,7 +33,6 @@ router.get(
 // single product
 router.get(
   "/:id",
-  userMiddleware.authUser,
   productController.GetSingleProduct,
 );
 

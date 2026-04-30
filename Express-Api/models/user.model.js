@@ -26,6 +26,18 @@ let userSchema = mongoose.Schema({
     enum: ["user", "admin", "manager"],
     default: "user",
   },
+  phone: {
+    type: String,
+    default: '',
+  },
+  address: {
+    type: String,
+    default: '',
+  },
+  avatar: {
+    type: String,
+    default: '',
+  },
 });
 
 // jwt token

@@ -29,6 +29,10 @@ let OrderSchema = mongoose.Schema({
     enum: ["pending", "shipped", "delivered", "cancelled"],
     default: "pending",
   },
+  paymentMethod: {
+    type: String,
+    default: 'COD'
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model("order", OrderSchema);

@@ -81,16 +81,16 @@ module.exports.logoutUser = (req, res) => {
 };
 
 module.exports.updateProfile = async (req, res) => {
-  const userId = req.user.id;
-  console.log(userId);
+  try {
+    const userId = req.user._id;
+    const { username, email, phone, address, avatar } = req.body;
 
-  const { username, email } = req.body;
+    const updateUser = await userService.updateUser({ userId, username, email, phone, address, avatar });
 
-  const updateUser = await userService.updateUser({ userId, username, email });
-
-  res
-    .status(200)
-    .json({ message: "User Data Updated Successfully,", updateUser });
+    return res.status(200).json({ message: "Profile Updated Successfully", user: updateUser });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
 };
 
 // forget password --> send email for reset password

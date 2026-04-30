@@ -36,6 +36,7 @@ module.exports.CreateOrder = async ({ userId, items, shippingDetails }) => {
     items: orderItems,
     totalbill: totalAmount,
     shippingDetails,
+    paymentMethod: shippingDetails.paymentMethod || 'COD',
     status: "pending"
   });
 };

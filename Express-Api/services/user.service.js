@@ -17,10 +17,17 @@ module.exports.createUser = async ({ username, email, password, role }) => {
 };
 
 // update data
-module.exports.updateUser = async ({ userId, username, email }) => {
+module.exports.updateUser = async ({ userId, username, email, phone, address, avatar }) => {
+  const updateFields = {};
+  if (username) updateFields.username = username;
+  if (email)    updateFields.email    = email;
+  if (phone   !== undefined) updateFields.phone   = phone;
+  if (address !== undefined) updateFields.address = address;
+  if (avatar  !== undefined) updateFields.avatar  = avatar;
+
   const updatedUser = await userModel.findOneAndUpdate(
     { _id: userId },
-    { username, email },
+    updateFields,
     { new: true },
   );
 

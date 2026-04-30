@@ -27,7 +27,16 @@ module.exports.addToCart = async ({ userId, item, overwrite }) => {
 
 // get Cart
 module.exports.GetCart = async (userId) => {
-  return await cartModel.findOne({ userId }).populate("items.productId");
+  const cart = await cartModel.findOne({ userId }).populate("items.productId");
+  if (cart && cart.items) {
+    // Safety check: Filter out any items where the productId is null (deleted from DB)
+    const originalLength = cart.items.length;
+    cart.items = cart.items.filter(item => item.productId);
+    if (cart.items.length !== originalLength) {
+      await cart.save(); // Cleanup the cart in DB
+    }
+  }
+  return cart;
 };
 
 // delete single product from cart

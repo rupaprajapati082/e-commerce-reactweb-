@@ -4,23 +4,42 @@ const cartModel = require("../models/cart.model");
 // create order from cart
 module.exports.CreateOrder = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const { shippingDetails } = req.body;
+    const userId = req.user._id; // Use _id directly for reliable ObjectId matching
+    const { shippingDetails, paymentMethod } = req.body;
+    
+    // Add paymentMethod to shippingDetails object for the service
+    const shippingWithPayment = { ...shippingDetails, paymentMethod };
 
     // Fetch the user's cart with populated product data
     const cart = await cartModel.findOne({ userId }).populate("items.productId");
 
     if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ message: "Your cart is empty" });
+      return res.status(400).json({ 
+        message: "Your cart is empty. Please add items to your cart before placing an order." 
+      });
     }
 
-    // Build items array from cart
-    const items = cart.items.map(item => ({
-      productId: item.productId._id,
-      quantity: item.quantity
-    }));
+    // Build items array from cart with safety filtering
+    const items = cart.items
+      .filter(item => item.productId) // Skip items where product was deleted
+      .map(item => ({
+        productId: item.productId._id,
+        quantity: item.quantity
+      }));
 
-    const order = await orderService.CreateOrder({ userId, items, shippingDetails });
+    const order = await orderService.CreateOrder({ userId, items, shippingDetails: shippingWithPayment });
+
+    // Sync user profile with shipping details if profile is empty
+    const user = await userModel.findById(userId);
+    if (user) {
+      let needsUpdate = false;
+      if (!user.phone && shippingDetails.phone) { user.phone = shippingDetails.phone; needsUpdate = true; }
+      if (!user.address && shippingDetails.address) { 
+        user.address = `${shippingDetails.address}, ${shippingDetails.city}, ${shippingDetails.zip}`; 
+        needsUpdate = true; 
+      }
+      if (needsUpdate) await user.save();
+    }
 
     // Clear the cart after successful order
     cart.items = [];
