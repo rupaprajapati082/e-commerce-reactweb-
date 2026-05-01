@@ -53,6 +53,11 @@ let productSchema = mongoose.Schema(
       required: true,
       minLength: 3,
     },
+    sizes: [
+      {
+        type: String,
+      },
+    ],
   },
   { timestamps: true },
 );

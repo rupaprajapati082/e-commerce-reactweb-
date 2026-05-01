@@ -13,6 +13,7 @@ const cartRouter = require("./routes/web/v1/cart.route");
 const orderRouter = require("./routes/web/v1/order.route");
 const wishlistRouter = require("./routes/web/v1/wishlist.route");
 const paymentRouter = require("./routes/web/v1/payment.route");
+const categoryRouter = require("./routes/web/v1/category.route");
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use("/cart", cartRouter);
 app.use("/order", orderRouter);
 app.use("/wishlist", wishlistRouter);
 app.use("/payment", paymentRouter);
+app.use("/category", categoryRouter);
 
 app.listen(PORT, () => {
   console.log(`✅ server is Running on PORT ${PORT}`);

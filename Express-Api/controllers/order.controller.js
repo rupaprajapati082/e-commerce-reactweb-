@@ -1,5 +1,6 @@
 const orderService = require("../services/order.service");
 const cartModel = require("../models/cart.model");
+const userModel = require("../models/user.model");
 
 // create order from cart
 module.exports.CreateOrder = async (req, res) => {

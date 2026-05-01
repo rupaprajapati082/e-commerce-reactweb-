@@ -14,6 +14,7 @@ module.exports.CreateProduct = async (req, res) => {
       sku,
       brand,
       category,
+      sizes,
     } = req.body;
 
     // Handle uploaded images
@@ -34,6 +35,8 @@ module.exports.CreateProduct = async (req, res) => {
       return res.status(400).json({ message: "Product Already Registered" });
     }
 
+    const normalizedCategory = category ? category.trim().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') : category;
+
     const product = await productService.createProduct({
       name,
       description,
@@ -44,7 +47,8 @@ module.exports.CreateProduct = async (req, res) => {
       sku,
       images,
       brand,
-      category,
+      category: normalizedCategory,
+      sizes,
     });
 
     return res.status(200).json({ msg: "Product Added Successfully", product });
@@ -99,6 +103,7 @@ module.exports.UpdateProduct = async (req, res) => {
       sku,
       brand,
       category,
+      sizes,
     } = req.body;
 
     // Handle uploaded images if any
@@ -112,6 +117,8 @@ module.exports.UpdateProduct = async (req, res) => {
       images = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
     }
 
+    const normalizedCategory = category ? category.trim().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') : category;
+
     const updatedProduct = await productService.updateProduct({
       productId,
       name,
@@ -123,7 +130,8 @@ module.exports.UpdateProduct = async (req, res) => {
       sku,
       images,
       brand,
-      category,
+      category: normalizedCategory,
+      sizes,
     });
 
     return res

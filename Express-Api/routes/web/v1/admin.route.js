@@ -3,6 +3,7 @@ const router = express.Router();
 const middleware = require("../../../middlewares/admin.middleware");
 const usermiddleware = require("../../../middlewares/user.middleware");
 const adminController = require("../../../controllers/admin.controller");
+const orderController = require("../../../controllers/order.controller");
 const { body } = require("express-validator");
 
 // show all users
@@ -37,6 +38,14 @@ router.get(
   usermiddleware.authUser,
   middleware.authAdmin,
   adminController.getAllOrders,
+);
+
+// Update order status
+router.put(
+  "/order-status/:id",
+  usermiddleware.authUser,
+  middleware.authAdmin,
+  orderController.UpdateOrderStatus
 );
 
 module.exports = router;

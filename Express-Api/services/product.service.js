@@ -12,6 +12,7 @@ module.exports.createProduct = async ({
   images,
   brand,
   category,
+  sizes,
 }) => {
   if (
     !name ||
@@ -37,6 +38,7 @@ module.exports.createProduct = async ({
     images,
     brand,
     category,
+    sizes,
   });
 
   return product;

@@ -25,9 +25,7 @@ const Navbar = () => {
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
-  const categoriesList = [
-    'Dress', 'Electronic', 'Fashion', 'Top', 'Cosmetic'
-  ];
+  const [categoriesList, setCategoriesList] = useState([]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -35,12 +33,25 @@ const Navbar = () => {
       setUser(JSON.parse(storedUser));
     }
     fetchCartCount();
+    fetchCategories();
     
     // Listen for custom event to update cart count globally
     const handleCartUpdate = () => fetchCartCount();
     window.addEventListener('cartUpdated', handleCartUpdate);
     return () => window.removeEventListener('cartUpdated', handleCartUpdate);
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/category/all`);
+      if (response.ok) {
+        const data = await response.json();
+        setCategoriesList(data.categories?.map(c => c.name) || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch categories:', err);
+    }
+  };
 
   const fetchCartCount = async () => {
     try {
@@ -130,7 +141,7 @@ const Navbar = () => {
                   {categoriesList.map(cat => (
                     <Link 
                       key={cat} 
-                      to={`/products?search=${encodeURIComponent(cat)}`} 
+                      to={`/products?category=${encodeURIComponent(cat)}`} 
                       className="px-5 py-2.5 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-[#FF4C3B] transition-colors flex items-center justify-between group/item"
                     >
                       {cat}
@@ -221,7 +232,7 @@ const Navbar = () => {
                     {categoriesList.map(cat => (
                       <Link 
                         key={cat} 
-                        to={`/products?search=${encodeURIComponent(cat)}`} 
+                        to={`/products?category=${encodeURIComponent(cat)}`} 
                         className="text-sm font-medium dark:text-slate-300 hover:text-[#FF4C3B]"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >

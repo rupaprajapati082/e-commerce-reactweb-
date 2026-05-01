@@ -37,7 +37,8 @@ module.exports.CreateOrder = async ({ userId, items, shippingDetails }) => {
     totalbill: totalAmount,
     shippingDetails,
     paymentMethod: shippingDetails.paymentMethod || 'COD',
-    status: "pending"
+    paymentStatus: (shippingDetails.paymentMethod === 'Card') ? 'completed' : 'pending',
+    status: (shippingDetails.paymentMethod === 'Card') ? 'processing' : 'pending'
   });
 };
 
