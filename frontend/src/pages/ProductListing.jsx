@@ -241,15 +241,24 @@ const ProductListing = () => {
                   animate={{ opacity: 1, y: 0 }}
                   className="group bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden hover:shadow-2xl transition-all duration-500"
                 >
-                  <div className="relative aspect-square overflow-hidden bg-slate-50 p-6">
+                  <div className="relative aspect-[1/1.1] overflow-hidden bg-slate-100">
                     <img 
                       src={getProductImage(product)} 
-                      className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
                       alt={product.name}
                     />
-                    <button onClick={(e) => { e.stopPropagation(); addToWishlist(product._id); }} className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-slate-400 hover:text-red-500 shadow-sm transition-all z-10">
-                      <Heart size={18} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); addToWishlist(product._id); }} 
+                      className="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-slate-400 hover:text-red-500 shadow-xl transition-all z-10 transform group-hover:translate-y-2"
+                    >
+                      <Heart size={20} />
                     </button>
+                    
+                    <div className="absolute top-6 left-6 w-12 h-12 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-slate-400 hover:text-black shadow-xl transition-all z-10 transform group-hover:translate-y-2">
+                       <X size={20} />
+                    </div>
                   </div>
 
                   <div className="p-8 space-y-4">

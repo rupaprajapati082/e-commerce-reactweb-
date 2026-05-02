@@ -36,10 +36,19 @@ module.exports.CreateOrder = async ({ userId, items, shippingDetails }) => {
     items: orderItems,
     totalbill: totalAmount,
     shippingDetails,
-    paymentMethod: shippingDetails.paymentMethod || 'COD',
-    paymentStatus: (shippingDetails.paymentMethod === 'Card') ? 'completed' : 'pending',
-    status: (shippingDetails.paymentMethod === 'Card') ? 'processing' : 'pending'
+    paymentMethod: shippingDetails.paymentMethod || 'COD System',
+    paymentStatus: (shippingDetails.paymentMethod === 'Card Protocol') ? 'completed' : 'pending',
+    status: (shippingDetails.paymentMethod === 'Card Protocol') ? 'processing' : 'pending'
   });
+};
+
+// pay order
+module.exports.PayOrder = async (orderId) => {
+  return await orderModel.findByIdAndUpdate(
+    orderId,
+    { paymentStatus: 'completed', status: 'processing', paymentMethod: 'Card Protocol' },
+    { new: true }
+  ).populate("items.productId");
 };
 
 // get order history

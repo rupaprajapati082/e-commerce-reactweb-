@@ -31,7 +31,7 @@ const Checkout = () => {
   });
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [paymentMethod, setPaymentMethod] = useState('cod');
+  const [paymentMethod, setPaymentMethod] = useState('COD System');
   const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
 
@@ -71,12 +71,12 @@ const Checkout = () => {
     try {
       const token = localStorage.getItem('token');
       
-      if (paymentMethod === 'stripe') {
+      if (paymentMethod === 'Card Protocol' || paymentMethod === 'UPI Gateway') {
         await new Promise(resolve => setTimeout(resolve, 2000));
       }
 
       const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/order/add`, 
-        { shippingDetails: formData, paymentMethod: paymentMethod === 'stripe' ? 'Card' : 'COD' },
+        { shippingDetails: formData, paymentMethod },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
@@ -177,33 +177,47 @@ const Checkout = () => {
                  </div>
                </div>
 
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div 
-                    onClick={() => setPaymentMethod('stripe')}
-                    className={`p-10 rounded-[3rem] border-2 cursor-pointer transition-all ${paymentMethod === 'stripe' ? 'border-[#FF4C3B] bg-[#FF4C3B]/5 shadow-xl' : 'border-slate-100 hover:border-slate-200'}`}
+                    onClick={() => setPaymentMethod('Card Protocol')}
+                    className={`p-8 rounded-[2rem] border-2 cursor-pointer transition-all ${paymentMethod === 'Card Protocol' ? 'border-[#FF4C3B] bg-[#FF4C3B]/5 shadow-xl' : 'border-slate-100 hover:border-slate-200'}`}
                   >
-                     <div className="flex justify-between mb-8">
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'stripe' ? 'border-[#FF4C3B]' : 'border-slate-200'}`}>
-                          {paymentMethod === 'stripe' && <div className="w-3 h-3 rounded-full bg-[#FF4C3B]" />}
+                     <div className="flex justify-between mb-6">
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'Card Protocol' ? 'border-[#FF4C3B]' : 'border-slate-200'}`}>
+                          {paymentMethod === 'Card Protocol' && <div className="w-3 h-3 rounded-full bg-[#FF4C3B]" />}
                         </div>
-                        <Lock size={18} className="text-slate-300" />
+                        <CreditCard size={18} className="text-slate-300" />
                      </div>
-                     <h3 className="text-xl font-black text-slate-900 mb-2">Secured Card</h3>
-                     <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest">256-bit AES Encrypted</p>
+                     <h3 className="text-lg font-black text-slate-900 mb-1">Card Protocol</h3>
+                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">256-bit AES Encrypted</p>
                   </div>
 
                   <div 
-                    onClick={() => setPaymentMethod('cod')}
-                    className={`p-10 rounded-[3rem] border-2 cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-[#FF4C3B] bg-[#FF4C3B]/5 shadow-xl' : 'border-slate-100 hover:border-slate-200'}`}
+                    onClick={() => setPaymentMethod('COD System')}
+                    className={`p-8 rounded-[2rem] border-2 cursor-pointer transition-all ${paymentMethod === 'COD System' ? 'border-[#FF4C3B] bg-[#FF4C3B]/5 shadow-xl' : 'border-slate-100 hover:border-slate-200'}`}
                   >
-                     <div className="flex justify-between mb-8">
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'cod' ? 'border-[#FF4C3B]' : 'border-slate-200'}`}>
-                          {paymentMethod === 'cod' && <div className="w-3 h-3 rounded-full bg-[#FF4C3B]" />}
+                     <div className="flex justify-between mb-6">
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'COD System' ? 'border-[#FF4C3B]' : 'border-slate-200'}`}>
+                          {paymentMethod === 'COD System' && <div className="w-3 h-3 rounded-full bg-[#FF4C3B]" />}
                         </div>
                         <Truck size={18} className="text-slate-300" />
                      </div>
-                     <h3 className="text-xl font-black text-slate-900 mb-2">Direct COD</h3>
-                     <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest">Pay upon deployment</p>
+                     <h3 className="text-lg font-black text-slate-900 mb-1">COD System</h3>
+                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Pay on Deployment</p>
+                  </div>
+                  
+                  <div 
+                    onClick={() => setPaymentMethod('UPI Gateway')}
+                    className={`p-8 rounded-[2rem] border-2 cursor-pointer transition-all ${paymentMethod === 'UPI Gateway' ? 'border-[#FF4C3B] bg-[#FF4C3B]/5 shadow-xl' : 'border-slate-100 hover:border-slate-200'}`}
+                  >
+                     <div className="flex justify-between mb-6">
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'UPI Gateway' ? 'border-[#FF4C3B]' : 'border-slate-200'}`}>
+                          {paymentMethod === 'UPI Gateway' && <div className="w-3 h-3 rounded-full bg-[#FF4C3B]" />}
+                        </div>
+                        <Lock size={18} className="text-slate-300" />
+                     </div>
+                     <h3 className="text-lg font-black text-slate-900 mb-1">UPI Gateway</h3>
+                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Instant Transfer</p>
                   </div>
                </div>
             </section>

@@ -22,6 +22,7 @@ import {
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [expandedOrderId, setExpandedOrderId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,6 +42,21 @@ const OrderHistory = () => {
     };
     fetchOrders();
   }, []);
+
+  const handlePayment = async (orderId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(`${import.meta.env.VITE_BASE_URL}/order/pay/${orderId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // update local state
+      setOrders(orders.map(o => o._id === orderId ? { ...o, paymentStatus: 'completed', paymentMethod: 'Card Protocol', status: 'processing' } : o));
+      alert('Payment successful!');
+    } catch (err) {
+      console.error(err);
+      alert('Payment failed');
+    }
+  };
 
   const getStatusStyle = (status) => {
     switch (status.toLowerCase()) {
@@ -80,6 +96,50 @@ const OrderHistory = () => {
               />
            </div>
         </header>
+
+        {/* ── Metric Summary ── */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          {[
+            { 
+              label: 'Active Deployments', 
+              value: orders.filter(o => ['pending', 'processing', 'shipped'].includes(o.status)).length, 
+              icon: Zap, 
+              color: 'from-[#FF4C3B] to-orange-500',
+              bg: 'bg-orange-50 dark:bg-orange-500/5'
+            },
+            { 
+              label: 'Successful Deliveries', 
+              value: orders.filter(o => o.status === 'delivered').length, 
+              icon: CheckCircle2, 
+              color: 'from-emerald-500 to-teal-500',
+              bg: 'bg-emerald-50 dark:bg-emerald-500/5'
+            },
+            { 
+              label: 'Total Investment', 
+              value: `₹${orders.reduce((acc, o) => acc + (o.totalbill || o.totalAmount || 0), 0).toLocaleString()}`, 
+              icon: CreditCard, 
+              color: 'from-blue-500 to-indigo-600',
+              bg: 'bg-blue-50 dark:bg-blue-500/5'
+            }
+          ].map((stat, i) => (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className={`relative overflow-hidden p-8 rounded-[3rem] border border-slate-100 dark:border-white/5 shadow-sm group hover:border-[#FF4C3B]/30 transition-all ${stat.bg}`}
+            >
+              <div className="relative z-10">
+                <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-white shadow-lg mb-6`}>
+                  <stat.icon size={24} />
+                </div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{stat.label}</p>
+                <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{stat.value}</h3>
+              </div>
+              <div className={`absolute -right-4 -bottom-4 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-[0.03] group-hover:opacity-[0.08] rounded-full blur-2xl transition-opacity`} />
+            </motion.div>
+          ))}
+        </div>
 
         {orders.length === 0 ? (
           <motion.div 
@@ -134,20 +194,20 @@ const OrderHistory = () => {
                          </div>
                          <div className="hidden lg:block">
                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mb-2 flex items-center gap-2"><CreditCard size={12} /> Total Transaction</p>
-                           <p className="font-black dark:text-white text-xl tracking-tighter text-[#FF4C3B]">₹{order.totalAmount.toLocaleString()}</p>
+                           <p className="font-black dark:text-white text-xl tracking-tighter text-[#FF4C3B]">₹{(order.totalbill || order.totalAmount || 0).toLocaleString()}</p>
                          </div>
                       </div>
                    </div>
 
                    <div className="flex flex-col md:flex-row justify-between items-center gap-10">
-                      <div className="flex -space-x-4">
+                      <div className="flex -space-x-6">
                          {order.items.slice(0, 4).map((item, i) => (
-                           <div key={i} className="w-16 h-16 rounded-2xl border-4 border-[#F9FAFB] dark:border-[#111] bg-white dark:bg-white/5 p-3 overflow-hidden shadow-sm relative group-hover:z-10 transition-all">
+                           <div key={i} className="w-24 h-24 rounded-3xl border-4 border-white dark:border-[#111] bg-white dark:bg-white/5 p-1 overflow-hidden shadow-xl relative group-hover:z-10 hover:scale-110 transition-all cursor-zoom-in">
                              <img src={getProductImage(item.productId)} className="w-full h-full object-contain" alt="" />
                            </div>
                          ))}
                          {order.items.length > 4 && (
-                           <div className="w-16 h-16 rounded-2xl border-4 border-[#F9FAFB] dark:border-[#111] bg-slate-900 flex items-center justify-center text-xs font-black text-white">
+                           <div className="w-24 h-24 rounded-3xl border-4 border-white dark:border-[#111] bg-slate-900 flex items-center justify-center text-sm font-black text-white shadow-xl">
                              +{order.items.length - 4}
                            </div>
                          )}
@@ -157,11 +217,84 @@ const OrderHistory = () => {
                         <button className="flex-1 md:flex-none px-8 py-4 bg-white dark:bg-white/10 text-slate-900 dark:text-white font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-black hover:text-white transition-all shadow-sm border border-slate-100 dark:border-white/10">
                           Track Shipment
                         </button>
-                        <button className="flex-1 md:flex-none px-10 py-4 bg-black text-white font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-[#FF4C3B] transition-all shadow-xl shadow-black/10 flex items-center justify-center gap-3">
-                          Full Audit <MoreHorizontal size={14} />
+                        <button 
+                          onClick={() => setExpandedOrderId(expandedOrderId === order._id ? null : order._id)}
+                          className="flex-1 md:flex-none px-10 py-4 bg-black text-white font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-[#FF4C3B] transition-all shadow-xl shadow-black/10 flex items-center justify-center gap-3">
+                          {expandedOrderId === order._id ? 'Close Audit' : 'Full Audit'} <MoreHorizontal size={14} />
                         </button>
                       </div>
                    </div>
+
+                   {/* Expanded Details Section */}
+                   {expandedOrderId === order._id && (
+                     <motion.div 
+                       initial={{ opacity: 0, height: 0 }}
+                       animate={{ opacity: 1, height: 'auto' }}
+                       className="mt-8 pt-8 border-t border-slate-200/50 dark:border-white/5 space-y-6"
+                     >
+                        <h5 className="text-xs font-black uppercase tracking-widest text-slate-400">Order Contents</h5>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                          <div className="space-y-4">
+                            {order.items.map((item, idx) => (
+                              <div key={idx} className="flex items-center gap-4 bg-white dark:bg-[#111] p-4 rounded-2xl border border-slate-100 dark:border-white/5">
+                                 <div className="w-24 h-24 rounded-2xl bg-white dark:bg-white/5 p-2 shrink-0 border border-slate-100 dark:border-white/10 shadow-sm">
+                                   <img src={getProductImage(item.productId)} className="w-full h-full object-contain" alt="" />
+                                 </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-bold text-sm dark:text-white truncate">
+                                    {item.productId?.name || 'Unknown Product'}
+                                  </p>
+                                  <div className="flex items-center justify-between mt-2">
+                                    <p className="text-xs text-slate-500 font-medium">Qty: {item.quantity}</p>
+                                    <p className="text-sm font-black dark:text-white">₹{(item.price || 0).toLocaleString()}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          <div className="bg-white dark:bg-[#111] p-6 rounded-2xl border border-slate-100 dark:border-white/5 space-y-6">
+                             <div>
+                               <h6 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Shipping Details</h6>
+                               <div className="space-y-1">
+                                 <p className="text-sm font-bold dark:text-white">{order.shippingDetails?.firstName} {order.shippingDetails?.lastName}</p>
+                                 <p className="text-sm text-slate-500">{order.shippingDetails?.address}</p>
+                                 <p className="text-sm text-slate-500">{order.shippingDetails?.city}, {order.shippingDetails?.zip}</p>
+                                 <p className="text-sm text-slate-500">Phone: {order.shippingDetails?.phone}</p>
+                               </div>
+                             </div>
+                             
+                             <div className="pt-6 border-t border-slate-100 dark:border-white/5">
+                               <h6 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Payment Info</h6>
+                               <div className="flex justify-between items-center mb-2">
+                                 <p className="text-sm text-slate-500">Method</p>
+                                 <p className="text-sm font-bold dark:text-white uppercase">{order.paymentMethod || 'N/A'}</p>
+                               </div>
+                               <div className="flex justify-between items-center mb-2">
+                                 <p className="text-sm text-slate-500">Status</p>
+                                 <div className="flex items-center gap-3">
+                                   {order.paymentStatus !== 'completed' && (
+                                     <button 
+                                       onClick={() => handlePayment(order._id)}
+                                       className="bg-[#FF4C3B] text-white text-[9px] px-3 py-1.5 rounded-full font-black uppercase tracking-widest hover:bg-black transition-colors"
+                                     >
+                                       Pay Now
+                                     </button>
+                                   )}
+                                   <p className={`text-[10px] px-2 py-1 rounded font-black uppercase tracking-widest ${order.paymentStatus === 'completed' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-orange-500/10 text-orange-500'}`}>
+                                     {order.paymentStatus || 'Pending'}
+                                   </p>
+                                 </div>
+                               </div>
+                               <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-100 dark:border-white/5">
+                                 <p className="font-black dark:text-white">Total Amount</p>
+                                 <p className="font-black text-xl text-[#FF4C3B]">₹{(order.totalbill || order.totalAmount || 0).toLocaleString()}</p>
+                               </div>
+                             </div>
+                          </div>
+                        </div>
+                     </motion.div>
+                   )}
                 </div>
               </motion.div>
             ))}

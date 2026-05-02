@@ -13,4 +13,7 @@ router.get("/user-orders", userMiddleware.authUser, orderController.GetOrder);
 // update order status (admin)
 router.put("/status/:id", userMiddleware.authUser, orderController.UpdateOrderStatus);
 
+// pay pending order
+router.put("/pay/:id", userMiddleware.authUser, orderController.PayOrder);
+
 module.exports = router;

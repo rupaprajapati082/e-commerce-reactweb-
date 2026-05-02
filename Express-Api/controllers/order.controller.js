@@ -93,3 +93,21 @@ module.exports.UpdateOrderStatus = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
+
+// pay pending order (user)
+module.exports.PayOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const order = await orderService.PayOrder(orderId);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: `Payment successful`, order });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};

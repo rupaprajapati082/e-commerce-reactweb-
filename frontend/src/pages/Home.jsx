@@ -184,10 +184,12 @@ const Home = () => {
                 const finalPrice = product.discount > 0 ? (product.price - (product.price * product.discount / 100)) : product.price;
                 return (
                   <motion.div key={product._id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="group bg-white dark:bg-[#111] rounded-[2.5rem] border border-slate-100 dark:border-white/5 overflow-hidden hover:shadow-2xl transition-all flex flex-col">
-                    <div onClick={() => navigate(`/product/${product._id}`)} className="relative aspect-square bg-slate-50 dark:bg-white/5 overflow-hidden cursor-pointer p-8">
-                      <img src={getProductImage(product)} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" alt="" />
-                      <button onClick={(e) => { e.stopPropagation(); addToWishlist(product._id); }} className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/80 dark:bg-black/50 backdrop-blur-md flex items-center justify-center text-slate-400 hover:text-red-500 shadow-sm transition-all z-10">
-                        <Heart size={18} />
+                    <div onClick={() => navigate(`/product/${product._id}`)} className="relative aspect-[1/1.1] bg-slate-100 dark:bg-white/5 overflow-hidden cursor-pointer">
+                      <img src={getProductImage(product)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt="" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      
+                      <button onClick={(e) => { e.stopPropagation(); addToWishlist(product._id); }} className="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/90 dark:bg-black/50 backdrop-blur-md flex items-center justify-center text-slate-400 hover:text-red-500 shadow-xl transition-all z-10 transform group-hover:translate-y-2">
+                        <Heart size={20} />
                       </button>
                     </div>
                     
